@@ -2,8 +2,6 @@ package com.zti.tunesbackend.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "playlist")
@@ -17,20 +15,16 @@ public class PlaylistEntity implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}  )
-    @JoinColumn(name="user_fk", nullable=false)
-    private UserEntity owner;
-
-    @ManyToMany(mappedBy = "playlists")
-    Set<AlbumEntity> albums = new HashSet<>();
+    @Column(name="user_fk")
+    private Long owner_id;
 
     public PlaylistEntity(){
 
     }
 
-    public PlaylistEntity(String playlistName, UserEntity owner){
-        this.name = playlistName;
-        this.owner = owner;
+    public PlaylistEntity(String name, Long owner_id){
+        this.name = name;
+        this.owner_id = owner_id;
     }
 
     public Long getId(){
@@ -49,26 +43,8 @@ public class PlaylistEntity implements Serializable {
         this.name = playlistName;
     }
 
-    public UserEntity getOwner(){ return owner; }
+    public Long getOwner(){ return owner_id; }
 
-    public void setOwner(UserEntity owner){ this.owner = owner; }
-
-    public Set<AlbumEntity> getAlbums(){
-        return albums;
-    }
-
-    public void setAlbums(Set<AlbumEntity> albumsInPlaylist){
-        this.albums = albumsInPlaylist;
-    }
-
-    public void addAlbumToPlaylist(AlbumEntity album){
-        this.albums.add(album);
-        album.getPlaylists().add(this);
-    }
-
-    public void removeAlbumToPlaylist(AlbumEntity album){
-        this.albums.remove(album);
-        album.getPlaylists().remove(this);
-    }
+    public void setOwner(Long owner_id){ this.owner_id = owner_id; }
 }
 

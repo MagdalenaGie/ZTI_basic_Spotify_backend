@@ -1,4 +1,5 @@
 package com.zti.tunesbackend.controller;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/playlist")
+@CrossOrigin(origins = "*")
 public class PlaylistController {
 
     private final PlaylistService playlistService;
@@ -24,6 +26,19 @@ public class PlaylistController {
     @GetMapping("/{id}")
     public Optional<PlaylistEntity> findPlaylistById(@PathVariable("id") Long id) {
         return playlistService.findById(id);
+    }
+
+    @GetMapping("/owner/{id}")
+    public List<PlaylistEntity> findPlaylistByOwnerId(@PathVariable("id") Long id) {
+        List<PlaylistEntity> all = playlistService.findAllPlaylists();
+        List<PlaylistEntity> ownersPlaylists = new ArrayList<>() ;
+        all.forEach(playlist -> {
+            if (playlist.getOwner() == id){
+                ownersPlaylists.add(playlist);
+            }
+        });
+
+        return ownersPlaylists;
     }
 
     @PostMapping

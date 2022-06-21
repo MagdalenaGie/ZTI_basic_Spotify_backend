@@ -2,8 +2,6 @@ package com.zti.tunesbackend.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "album")
@@ -14,31 +12,24 @@ public class AlbumEntity implements Serializable {
     @Column(name = "album_id", unique = true)
     private Long id;
 
-    @Column(name = "collection_id", unique = true)
+    @Column(name = "collection_id")
     private Long collectionId;
+
+    @Column(name = "playlist_fk")
+    private Long playlistId;
 
     @Column(name = "title")
     private String title;
 
     @Column(name = "author")
     private String author;
-
-    @ManyToMany(
-            cascade = {CascadeType.MERGE, CascadeType.PERSIST}
-    )
-    @JoinTable(
-            name = "playlist_album",
-            joinColumns = @JoinColumn(name = "album_fk"),
-            inverseJoinColumns = @JoinColumn(name = "playlist_fk"
-            ))
-    Set<PlaylistEntity> playlists = new HashSet<>();
-
     public AlbumEntity(){
 
     }
 
-    public AlbumEntity(Long collectionId, String title, String author){
+    public AlbumEntity(Long collectionId, Long playlistId, String title, String author){
         this.collectionId = collectionId;
+        this.playlistId = playlistId;
         this.title = title;
         this.author = author;
     }
@@ -59,6 +50,14 @@ public class AlbumEntity implements Serializable {
         this.collectionId = collectionId;
     }
 
+    public Long getPlaylistId(){
+        return playlistId;
+    }
+
+    public void setPlaylistId(Long playlistId){
+        this.playlistId = playlistId;
+    }
+
     public String getTitle(){
         return title;
     }
@@ -73,23 +72,5 @@ public class AlbumEntity implements Serializable {
 
     public void setAuthor(String author){
         this.author = author;
-    }
-
-    public Set<PlaylistEntity> getPlaylists(){
-        return playlists;
-    }
-
-    public void setPlaylists(Set<PlaylistEntity> playlists){
-        this.playlists = playlists;
-    }
-
-    public void addPlaylist(PlaylistEntity playlist){
-        this.playlists.add(playlist);
-        playlist.getAlbums().add(this);
-    }
-
-    public void removePlaylist(PlaylistEntity playlist){
-        this.playlists.remove(playlist);
-        playlist.getAlbums().remove(this);
     }
 }

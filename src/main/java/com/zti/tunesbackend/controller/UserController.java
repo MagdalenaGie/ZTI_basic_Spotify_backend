@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserService userService;
@@ -27,6 +28,21 @@ public class UserController {
         return userService.findById(id);
     }
 
+    @GetMapping("/{login}/{password}")
+    public UserEntity findUserByCredentials(
+            @PathVariable("login") String login,
+            @PathVariable("password") String password) {
+
+        List<UserEntity> allUsers = userService.findAllUsers();
+        for(UserEntity user: allUsers){
+            if (user.getUsername().equals(login))
+                if (user.getPassword().equals(password)) {
+                    return user;
+                }
+        }
+        return null;
+    }
+
     @PostMapping
     public UserEntity saveUser(@RequestBody UserEntity userEntity) {
         return userService.saveUser(userEntity);
@@ -40,12 +56,5 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
-    }
-
-    @PostMapping("playlist/{id}")
-    public Optional<UserEntity> addPlaylistToUser(@PathVariable("id") Long id, @RequestBody PlaylistEntity playlist) {
-        Optional<UserEntity> optionalUser = userService.findById(id);
-        optionalUser.ifPresent( user -> user.addPlaylist(playlist));
-        return optionalUser;
     }
 }

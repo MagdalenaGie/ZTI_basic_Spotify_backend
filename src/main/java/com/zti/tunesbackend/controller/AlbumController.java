@@ -1,27 +1,20 @@
 package com.zti.tunesbackend.controller;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zti.tunesbackend.entity.AlbumEntity;
-import com.zti.tunesbackend.entity.PlaylistEntity;
-import com.zti.tunesbackend.entity.UserEntity;
 import com.zti.tunesbackend.service.AlbumService;
-import com.zti.tunesbackend.service.PlaylistService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/album")
+@CrossOrigin(origins = "*")
 public class AlbumController {
 
     private final AlbumService albumService;
-    private final PlaylistService playlistService;
 
-    public AlbumController(AlbumService albumService, PlaylistService playlistService) {
-        this.albumService = albumService;
-        this.playlistService = playlistService;
-    }
+    public AlbumController(AlbumService albumService) { this.albumService = albumService; }
 
     @GetMapping
     public List<AlbumEntity> findAllAlbums() {
@@ -31,6 +24,19 @@ public class AlbumController {
     @GetMapping("/{id}")
     public Optional<AlbumEntity> findAlbumById(@PathVariable("id") Long id) {
         return albumService.findById(id);
+    }
+
+    @GetMapping("/playlist/{id}")
+    public List<AlbumEntity> findAlbumsFromPlaylist(@PathVariable("id") Long id) {
+        List<AlbumEntity> all = albumService.findAllAlbums();
+        List<AlbumEntity> albumsInPlaylist = new ArrayList<>() ;
+        all.forEach(album -> {
+            if (album.getPlaylistId() == id){
+                albumsInPlaylist.add(album);
+            }
+        });
+
+        return albumsInPlaylist;
     }
 
     @PostMapping

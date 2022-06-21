@@ -1,11 +1,7 @@
 package com.zti.tunesbackend.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "account_user")
@@ -26,18 +22,6 @@ public class UserEntity implements Serializable {
 
     @Column(name = "gender")
     private String gender;
-
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "playlist_id")
-//    private Set<PlaylistEntity> playlists;
-    @OneToMany(
-        mappedBy = "owner",
-        cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
-        orphanRemoval = true
-    )
-    @JsonIgnore
-    private List<PlaylistEntity> playlists = new ArrayList<>();;
-
 
     public UserEntity() {
     }
@@ -87,19 +71,5 @@ public class UserEntity implements Serializable {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public List<PlaylistEntity> getPlaylists(){ return playlists; }
-
-    public void setPlaylists(List<PlaylistEntity> playlists){ this.playlists = playlists; }
-
-    public void addPlaylist(PlaylistEntity playlist){
-        playlists.add(playlist);
-        playlist.setOwner(this);
-    }
-
-    public void removePlaylist(PlaylistEntity playlist){
-        playlists.remove(playlist);
-        playlist.setOwner(null);
     }
 }
